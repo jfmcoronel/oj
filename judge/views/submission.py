@@ -48,10 +48,6 @@ class SubmissionDetailBase(LoginRequiredMixin, TitleMixin, SubmissionMixin, Deta
             return submission
         if problem.is_editor(profile):
             return submission
-        if problem.is_public or problem.testers.filter(id=profile.id).exists():
-            if Submission.objects.filter(user_id=profile.id, result='AC', problem_id=problem.id,
-                                         points=problem.points).exists():
-                return submission
         raise PermissionDenied()
 
     def get_title(self):
@@ -175,7 +171,11 @@ class SubmissionsListBase(DiggPaginatorMixin, TitleMixin, ListView):
         return get_result_data(self.get_queryset().order_by())
 
     def access_check(self, request):
-        pass
+        # Submissions of other users (i.e., not your own)
+        # Covers both submissions/ and submissions/user/<username>/
+        if not hasattr(self, 'profile') or self.request.profile != self.profile:
+            if not self.request.user.is_superuser:
+                raise Http404()
 
     @cached_property
     def in_contest(self):
@@ -345,6 +345,15 @@ class ProblemSubmissionsBase(SubmissionsListBase):
     def access_check(self, request):
         if not self.problem.is_accessible_by(request.user):
             raise Http404()
+
+        if not self.request.user.is_authenticated:
+            raise Http404()
+
+        # Submissions of other users (i.e., not your own)
+        # Covers both submissions/ and submissions/<username>/
+        if not hasattr(self, 'profile') or self.request.profile != self.profile:
+            if not self.request.user.is_superuser:
+                raise Http404()
 
         if self.check_contest_in_access_check:
             self.access_check_contest(request)

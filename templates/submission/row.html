@@ -43,22 +43,24 @@
     </div>
 {% endif %}
 
-{% if can_view %}
-    <div class="sub-prop"><div>
-        <a href="{{ url('submission_status', submission.id) }}">
-            <i class="fa fa-eye fa-fw"></i><span class="label">{{ _('view') }}</span>
-        </a>
-        {% if perms.judge.rejudge_submission %} ·
-            <a href="#" onclick="rejudge_submission({{ submission.id }}, event);return false">
-                <i class="fa fa-refresh fa-fw"></i><span class="label">{{ _('rejudge') }}</span>
+{% if request.user.is_superuser %}
+    {% if can_view %}
+        <div class="sub-prop"><div>
+            <a href="{{ url('submission_status', submission.id) }}">
+                <i class="fa fa-eye fa-fw"></i><span class="label">{{ _('view') }}</span>
             </a>
-        {% endif %}
-        {% if perms.judge.change_submission %} ·
-            <a href="{{ url('admin:judge_submission_change', submission.id) }}">
-                <i class="fa fa-cog fa-fw"></i><span class="label">{{ _('admin') }}</span>
-            </a>
-        {% endif %}
-    </div></div>
+            {% if perms.judge.rejudge_submission %} ·
+                <a href="#" onclick="rejudge_submission({{ submission.id }}, event);return false">
+                    <i class="fa fa-refresh fa-fw"></i><span class="label">{{ _('rejudge') }}</span>
+                </a>
+            {% endif %}
+            {% if perms.judge.change_submission %} ·
+                <a href="{{ url('admin:judge_submission_change', submission.id) }}">
+                    <i class="fa fa-cog fa-fw"></i><span class="label">{{ _('admin') }}</span>
+                </a>
+            {% endif %}
+        </div></div>
+    {% endif %}
 {% endif %}
 
 <div class="sub-usage">
