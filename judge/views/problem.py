@@ -4,13 +4,14 @@ import shutil
 from datetime import timedelta
 from operator import itemgetter
 from random import randrange
+from collections import defaultdict
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.db import transaction
-from django.db.models import Count, F, Prefetch, Q
+from django.db.models import Count, F, Prefetch, Q, Max
 from django.db.utils import ProgrammingError
 from django.http import Http404, HttpResponse, HttpResponseForbidden, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
@@ -425,7 +426,21 @@ class ProblemList(QueryStringSortMixin, TitleMixin, SolvedProblemMixin, ListView
             context['hot_problems'] = None
             context['point_start'], context['point_end'], context['point_values'] = 0, 0, {}
             context['hide_contest_scoreboard'] = self.contest.hide_scoreboard
+
+        context['grades'] = self.get_problem_grades(context)
+
         return context
+
+    def get_problem_grades(self, context):
+        grades = defaultdict(int)
+        problems = context['problems']
+        user = self.request.user
+
+        for problem in problems:
+            if hasattr(problem, "grade_of"):
+                grades[problem.id] = problem.grade_of(user.profile)
+
+        return grades
 
     def get_noui_slider_points(self):
         points = sorted(self.prepoint_queryset.values_list('points', flat=True).distinct())

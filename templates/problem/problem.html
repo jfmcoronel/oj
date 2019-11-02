@@ -53,19 +53,11 @@
         {% if request.user.is_authenticated %}
             {% if problem.id in completed_problem_ids %}
                 <a href="{{ url('user_submissions', problem.code, request.user.username) }}">
-                    {% if problem.is_public or request.in_contest %}
-                        <i class="solved-problem-color title-state fa fa-check-circle"></i>
-                    {% else %}
-                        <i class="solved-problem-color title-state fa fa-lock"></i>
-                    {% endif %}
+                    <i class="solved-problem-color title-state fa fa-check"></i>
                 </a>
             {% elif problem.id in attempted_problems %}
                 <a href="{{ url('user_submissions', problem.code, request.user.username) }}">
-                    {% if problem.is_public or request.in_contest %}
-                        <i class="attempted-problem-color title-state fa fa-minus-circle"></i>
-                    {% else %}
-                        <i class="attempted-problem-color title-state fa fa-lock"></i>
-                    {% endif %}
+                    <i class="unsolved-problem-color title-state fa fa-times"></i>
                 </a>
             {% endif %}
         {% endif %}
