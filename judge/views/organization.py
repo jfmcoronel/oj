@@ -1,7 +1,7 @@
 from django import forms
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.cache import cache
 from django.core.cache.utils import make_template_fragment_key
 from django.core.exceptions import PermissionDenied
@@ -24,6 +24,12 @@ __all__ = ['OrganizationList', 'OrganizationHome', 'OrganizationUsers', 'Organiz
            'JoinOrganization', 'LeaveOrganization', 'EditOrganization', 'RequestJoinOrganization',
            'OrganizationRequestDetail', 'OrganizationRequestView', 'OrganizationRequestLog',
            'KickUserWidgetView']
+
+
+class StudentDisallowedMixin(UserPassesTestMixin):
+
+    def test_func(self):
+        return self.request.user.is_superuser
 
 
 class OrganizationMixin(object):
@@ -65,7 +71,7 @@ class OrganizationDetailView(OrganizationMixin, DetailView):
         return self.render_to_response(context)
 
 
-class OrganizationList(TitleMixin, ListView):
+class OrganizationList(StudentDisallowedMixin, TitleMixin, ListView):
     model = Organization
     context_object_name = 'organizations'
     template_name = 'organization/list.html'
@@ -75,7 +81,7 @@ class OrganizationList(TitleMixin, ListView):
         return super(OrganizationList, self).get_queryset().annotate(member_count=Count('member'))
 
 
-class OrganizationHome(OrganizationDetailView):
+class OrganizationHome(StudentDisallowedMixin, OrganizationDetailView):
     template_name = 'organization/home.html'
 
     def get_context_data(self, **kwargs):
@@ -85,7 +91,7 @@ class OrganizationHome(OrganizationDetailView):
         return context
 
 
-class OrganizationUsers(OrganizationDetailView):
+class OrganizationUsers(StudentDisallowedMixin, OrganizationDetailView):
     template_name = 'organization/users.html'
 
     def get_context_data(self, **kwargs):
@@ -144,7 +150,7 @@ class OrganizationRequestForm(Form):
     reason = forms.CharField(widget=forms.Textarea)
 
 
-class RequestJoinOrganization(LoginRequiredMixin, SingleObjectMixin, FormView):
+class RequestJoinOrganization(StudentDisallowedMixin, LoginRequiredMixin, SingleObjectMixin, FormView):
     model = Organization
     slug_field = 'key'
     slug_url_kwarg = 'key'
@@ -174,7 +180,7 @@ class RequestJoinOrganization(LoginRequiredMixin, SingleObjectMixin, FormView):
         )))
 
 
-class OrganizationRequestDetail(LoginRequiredMixin, TitleMixin, DetailView):
+class OrganizationRequestDetail(StudentDisallowedMixin, LoginRequiredMixin, TitleMixin, DetailView):
     model = OrganizationRequest
     template_name = 'organization/requests/detail.html'
     title = gettext_lazy('Join request detail')
@@ -211,7 +217,7 @@ class OrganizationRequestBaseView(LoginRequiredMixin, SingleObjectTemplateRespon
         return context
 
 
-class OrganizationRequestView(OrganizationRequestBaseView):
+class OrganizationRequestView(StudentDisallowedMixin, OrganizationRequestBaseView):
     template_name = 'organization/requests/pending.html'
     tab = 'pending'
 
@@ -258,7 +264,7 @@ class OrganizationRequestView(OrganizationRequestBaseView):
     put = post
 
 
-class OrganizationRequestLog(OrganizationRequestBaseView):
+class OrganizationRequestLog(StudentDisallowedMixin, OrganizationRequestBaseView):
     states = ('A', 'R')
     tab = 'log'
     template_name = 'organization/requests/log.html'
@@ -274,7 +280,7 @@ class OrganizationRequestLog(OrganizationRequestBaseView):
         return context
 
 
-class EditOrganization(LoginRequiredMixin, TitleMixin, OrganizationMixin, UpdateView):
+class EditOrganization(StudentDisallowedMixin, LoginRequiredMixin, TitleMixin, OrganizationMixin, UpdateView):
     template_name = 'organization/edit.html'
     model = Organization
     form_class = EditOrganizationForm
