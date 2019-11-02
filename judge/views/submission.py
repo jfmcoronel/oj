@@ -69,7 +69,7 @@ class SubmissionDetailBase(LoginRequiredMixin, TitleMixin, SubmissionMixin, Deta
                                    submission.problem.translated_name(self.request.LANGUAGE_CODE)),
             'user': format_html('<a href="{0}">{1}</a>',
                                 reverse('user_page', args=[submission.user.user.username]),
-                                submission.user.user.username),
+                                f"{submission.user.user.username} ({submission.user.user.last_name})"),
         })
 
 
