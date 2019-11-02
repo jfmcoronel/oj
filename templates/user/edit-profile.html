@@ -144,32 +144,10 @@
                                     </a>
                                 </td>
                             </tr>
-                            <tr>
-                                <td colspan="2"><span class="inline-header">
-                                    {% if profile.is_totp_enabled %}
-                                        {{ _('Two Factor Authentication is enabled.') }}
-                                        <a href="{{ url('disable_2fa') }}" class="button inline-button">Disable</a>
-                                    {% else %}
-                                        {{ _('Two Factor Authentication is disabled.') }}
-                                        <a href="{{ url('enable_2fa') }}" class="button inline-button">Enable</a>
-                                    {% endif %}
-                                </span></td>
-                            </tr>
                         </table>
-                    </td>
-                    <td>
-                        <div style="padding-bottom:0.4em;margin-top:-2em" class="block-header">
-                            {{ _('Affiliated organizations') }}:
-                        </div>
-                        {{ form.organizations }}
                     </td>
                 </tr>
             </table>
-
-            <hr>
-            <div class="block-header">{{ _('User-script') }}:</div>
-            {{ form.user_script }}
-            <hr>
 
             <input type="submit" style="float:right" value="{{ _('Update profile') }}">
         </form>
