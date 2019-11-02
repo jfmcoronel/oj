@@ -11,3 +11,4 @@ resources/content-description.css
 resources/ranks.css
 resources/table.css
 sass_processed
+*.swp
