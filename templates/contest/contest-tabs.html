@@ -3,14 +3,16 @@
 {% block tabs %}
     {{ make_tab('detail', 'fa-info-circle', url('contest_view', contest.key), _('Info')) }}
 
-    {% if contest.start_time <= now or perms.judge.see_private_contest %}
-        {% if contest.show_scoreboard or contest.can_see_scoreboard(request.user) %}
-            {{ make_tab('ranking', 'fa-bar-chart', url('contest_ranking', contest.key), _('Rankings')) }}
-        {% else %}
-            {{ make_tab('ranking', 'fa-bar-chart', None, _('Hidden Rankings')) }}
-        {% endif %}
-        {% if contest.show_scoreboard and request.user.is_authenticated %}
-            {{ make_tab('participation', 'fa-users', url('contest_participation_own', contest.key), _('Participation')) }}
+    {% if request.user.is_superuser %}
+        {% if contest.start_time <= now or perms.judge.see_private_contest %}
+            {% if contest.show_scoreboard or contest.can_see_scoreboard(request.user) %}
+                {{ make_tab('ranking', 'fa-bar-chart', url('contest_ranking', contest.key), _('Rankings')) }}
+            {% else %}
+                {{ make_tab('ranking', 'fa-bar-chart', None, _('Hidden Rankings')) }}
+            {% endif %}
+            {% if contest.show_scoreboard and request.user.is_authenticated %}
+                {{ make_tab('participation', 'fa-users', url('contest_participation_own', contest.key), _('Participation')) }}
+            {% endif %}
         {% endif %}
     {% endif %}
     {% if contest.is_editable_by(request.user) %}
