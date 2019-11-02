@@ -61,8 +61,7 @@ class CommentedDetailView(TemplateResponseMixin, SingleObjectMixin, View):
         return self.comment_page
 
     def is_comment_locked(self):
-        return (CommentLock.objects.filter(page=self.get_comment_page()).exists() and
-                not self.request.user.has_perm('judge.override_comment_lock'))
+        return True
 
     @method_decorator(login_required)
     def post(self, request, *args, **kwargs):
