@@ -2845,6 +2845,10 @@ msgstr ""
 msgid "Join"
 msgstr ""
 
+#: templates/contest/list.html:148
+msgid "Active Contests"
+msgstr "Active Activities"
+
 #: .\templates\contest\list.html:148
 msgid "Upcoming Contests"
 msgstr "Upcoming Activities"
