@@ -44,7 +44,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='contest',
             name='format_name',
-            field=models.CharField(choices=[(b'default', 'Default')], default=b'default', help_text='The contest format module to use.', max_length=32, verbose_name='contest format'),
+            field=models.CharField(choices=[(b'default', 'Default')], default='default', help_text='The contest format module to use.', max_length=32, verbose_name='contest format'),
         ),
         migrations.AddField(
             model_name='contestparticipation',
