@@ -326,6 +326,7 @@ class Problem(models.Model):
         result = self._get_limits('memory_limit')
         cache.set(key, result)
         return result
+
     @property
     def author_str(self):
         return ", ".join([a.user.username for a in self.authors.all()])

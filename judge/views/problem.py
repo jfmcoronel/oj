@@ -347,17 +347,26 @@ class ProblemList(QueryStringSortMixin, TitleMixin, SolvedProblemMixin, ListView
         queryset = TranslatedProblemForeignKeyQuerySet.add_problem_i18n_name(queryset, 'i18n_name',
                                                                              self.request.LANGUAGE_CODE,
                                                                              'problem__name')
-        return [{
-            'id': p['problem_id'],
-            'code': p['problem__code'],
-            'name': p['problem__name'],
-            'i18n_name': p['i18n_name'],
-            'group': {'full_name': p['problem__group__full_name']},
-            'points': p['points'],
-            'partial': p['partial'],
-            'user_count': p['user_count'],
-        } for p in queryset.values('problem_id', 'problem__code', 'problem__name', 'i18n_name',
-                                   'problem__group__full_name', 'points', 'partial', 'user_count')]
+        ret = []
+
+        for p in queryset.values('problem_id', 'problem__code', 'problem__name', 'i18n_name',
+                                 'problem__group__full_name', 'points', 'partial', 'user_count'):
+            problem = Problem.objects.get(id=p['problem_id'])
+
+            ret.append({
+                'id': p['problem_id'],
+                'code': p['problem__code'],
+                'name': p['problem__name'],
+                'i18n_name': p['i18n_name'],
+                'group': {'full_name': p['problem__group__full_name']},
+                'points': p['points'],
+                'partial': p['partial'],
+                'user_count': p['user_count'],
+                'author_str': problem.author_str,
+                'ac_rate': problem.ac_rate,
+            })
+
+        return ret
 
     def get_normal_queryset(self):
         filter = Q(is_public=True)

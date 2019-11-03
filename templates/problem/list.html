@@ -199,34 +199,49 @@
             <table id="problem-table" class="table striped">
                 <thead>
                 <tr>
-                    {% if request.user.is_authenticated %}
-                        <th class="solved">
-                            <a href="{{ sort_links.solved }}"><i class="fa fa-check"></i>{{ sort_order.solved }}
-                            </a>
+                    {% if request.in_contest %}
+                        {% if request.user.is_authenticated %}
+                            <th class="solved"><i class="fa fa-check"></i></th>
+                        {% endif %}
+                        <th class="problem">{{ _('Problem') }}</th>
+                        <th class="category">{{ _('Category') }}</th>
+                        <th class="grade">Grade</th>
+                        <th class="deadline">Deadline</th>
+                        <th class="author">Author/s</th>
+                        {% if request.user.is_superuser %}
+                            <th class="ac-rate">{{ _('AC %%') }}</th>
+                            <th class="users">{{ _('Users') }}</th>
+                        {% endif %}
+                    {% else %}
+                        {% if request.user.is_authenticated %}
+                            <th class="solved">
+                                <a href="{{ sort_links.solved }}"><i class="fa fa-check"></i>{{ sort_order.solved }}
+                                </a>
+                            </th>
+                        {% endif %}
+                        <th class="problem">
+                            <a href="{{ sort_links.name }}">{{ _('Problem') }}{{ sort_order.name }}</a>
                         </th>
-                    {% endif %}
-                    <th class="problem">
-                        <a href="{{ sort_links.name }}">{{ _('Problem') }}{{ sort_order.name }}</a>
-                    </th>
-                    <th class="category">
-                        <a href="{{ sort_links.group }}">{{ _('Category') }}{{ sort_order.group }}</a>
-                    </th>
-                    <th class="grade">
-                        <a href="#">Grade</a>
-                    </th>
-                    <th class="deadline">
-                        <a href="#">Deadline</a>
-                    </th>
-                    <th class="author">
-                        <a href="#">Author/s</a>
-                    </th>
-                    {% if request.user.is_superuser %}
-                        <th class="ac-rate">
-                            <a href="{{ sort_links.ac_rate }}">{{ _('AC %%') }}{{ sort_order.ac_rate }}</a>
+                        <th class="category">
+                            <a href="{{ sort_links.group }}">{{ _('Category') }}{{ sort_order.group }}</a>
                         </th>
-                        <th class="users">
-                            <a href="{{ sort_links.user_count }}">{{ _('Users') }}{{ sort_order.user_count }}</a>
+                        <th class="grade">
+                            <a href="#">Grade</a>
                         </th>
+                        <th class="deadline">
+                            <a href="#">Deadline</a>
+                        </th>
+                        <th class="author">
+                            <a href="#">Author/s</a>
+                        </th>
+                        {% if request.user.is_superuser %}
+                            <th class="ac-rate">
+                                <a href="{{ sort_links.ac_rate }}">{{ _('AC %%') }}{{ sort_order.ac_rate }}</a>
+                            </th>
+                            <th class="users">
+                                <a href="{{ sort_links.user_count }}">{{ _('Users') }}{{ sort_order.user_count }}</a>
+                            </th>
+                        {% endif %}
                     {% endif %}
                 </tr>
                 </thead>

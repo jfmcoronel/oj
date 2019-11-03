@@ -518,9 +518,12 @@ def base_contest_ranking_list(contest, problems, queryset):
 
 
 def contest_ranking_list(contest, problems):
-    return base_contest_ranking_list(contest, problems, contest.users.filter(virtual=0, user__is_unlisted=False)
+    unsorted_list =  base_contest_ranking_list(contest, problems, contest.users.filter(virtual=0, user__is_unlisted=False)
                                      .prefetch_related('user__organizations')
                                      .order_by('-score', 'cumtime'))
+
+    # Sort by highest points first, then lowest time taken
+    return sorted(unsorted_list, key=lambda a: (a.points, -a.participation.time_finished), reverse=True)
 
 
 def get_contest_ranking_list(request, contest, participation=None, ranking_list=contest_ranking_list,

@@ -1,7 +1,7 @@
 from datetime import timedelta
 
 from django.core.exceptions import ValidationError
-from django.db.models import Max
+from django.db.models import Min, Max
 from django.template.defaultfilters import floatformat
 from django.urls import reverse
 from django.utils.html import format_html
@@ -30,9 +30,17 @@ class DefaultContestFormat(BaseContestFormat):
         points = 0
         format_data = {}
 
-        for result in participation.submissions.values('problem_id').annotate(
-                time=Max('submission__date'), points=Max('points'),
-        ):
+        # Get earliest highest-scoring submission
+        results = participation.submissions.values('problem_id').annotate(
+            time=Max('submission__date'),
+            points=Max('points')
+        ).order_by(
+            '-points',
+            'submission__date'
+        )
+
+        if results:
+            result = results[0]
             dt = (result['time'] - participation.start).total_seconds()
             if result['points']:
                 cumtime += dt
@@ -63,7 +71,7 @@ class DefaultContestFormat(BaseContestFormat):
         return format_html(
             u'<td class="user-points">{points}<div class="solving-time">{cumtime}</div></td>',
             points=floatformat(participation.score),
-            cumtime=nice_repr(timedelta(seconds=participation.cumtime), 'noday'),
+            cumtime=nice_repr(participation.time_finished, 'noday'),
         )
 
     def get_problem_breakdown(self, participation, contest_problems):
