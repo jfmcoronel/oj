@@ -163,7 +163,11 @@
 
 {% block title_row %}
     {% set tab = 'list' %}
-    {% set title = 'Problems' %}
+    {% if request.in_contest %}
+        {% set title = request.profile.current_contest.contest %}
+    {% else %}
+        {% set title = 'Problems' %}
+    {% endif %}
     {% include "problem/problem-list-tabs.html" %}
 {% endblock %}
 

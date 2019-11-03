@@ -1970,7 +1970,7 @@ msgstr ""
 #: .\judge\views\contests.py:48 .\judge\views\contests.py:178
 #: .\judge\views\contests.py:181 .\judge\views\contests.py:308
 msgid "No such contest"
-msgstr ""
+msgstr "No such activity"
 
 #: .\judge\views\contests.py:49 .\judge\views\contests.py:179
 #, python-format
@@ -1979,7 +1979,7 @@ msgstr ""
 
 #: .\judge\views\contests.py:72 .\judge\views\contests.py:322
 msgid "Contests"
-msgstr ""
+msgstr "Activities"
 
 #: .\judge\views\contests.py:182
 msgid "Could not find such contest."
@@ -2693,7 +2693,7 @@ msgstr ""
 #: .\templates\contest\calendar.html:6
 #, python-format
 msgid "Contests in %(month)s"
-msgstr ""
+msgstr "Activities in %(month)s"
 
 #: .\templates\contest\calendar.html:13
 msgid "Sunday"
@@ -2755,7 +2755,7 @@ msgstr ""
 #: .\templates\contest\contest-tabs.html:26
 #: .\templates\contest\contest-tabs.html:40
 msgid "Leave contest"
-msgstr ""
+msgstr "Leave activity"
 
 #: .\templates\contest\contest-tabs.html:30 .\templates\contest\list.html:209
 msgid "Virtual join"
@@ -2767,12 +2767,12 @@ msgstr ""
 
 #: .\templates\contest\contest-tabs.html:45
 msgid "Spectate contest"
-msgstr ""
+msgstr "Spectate activity"
 
 #: .\templates\contest\contest-tabs.html:48
 #: .\templates\contest\contest-tabs.html:51
 msgid "Join contest"
-msgstr ""
+msgstr "Join activity"
 
 #: .\templates\contest\contest-tabs.html:57
 msgid "Login to participate"
@@ -2784,7 +2784,7 @@ msgstr ""
 
 #: .\templates\contest\contest.html:43
 msgid "Contest is over."
-msgstr ""
+msgstr "Activity is over."
 
 #: .\templates\contest\contest.html:59 .\templates\contest\contest.html:63
 msgid "F j, Y, G:i T"
@@ -2825,15 +2825,17 @@ msgid ""
 "Joining a contest for the first time starts your timer, after which it "
 "becomes unstoppable."
 msgstr ""
+"Joining an activity for the first time starts your timer, after which it "
+"becomes unstoppable."
 
 #: .\templates\contest\list.html:93
 msgid "Ongoing Contests"
-msgstr ""
+msgstr "Ongoing Activities"
 
 #: .\templates\contest\list.html:97 .\templates\contest\list.html:153
 #: .\templates\contest\list.html:184
 msgid "Contest"
-msgstr ""
+msgstr "Activity"
 
 #: .\templates\contest\list.html:132
 msgid "Spectate"
@@ -2845,15 +2847,15 @@ msgstr ""
 
 #: .\templates\contest\list.html:148
 msgid "Upcoming Contests"
-msgstr ""
+msgstr "Upcoming Activities"
 
 #: .\templates\contest\list.html:175
 msgid "There are no scheduled contests at this time."
-msgstr ""
+msgstr "There are no scheduled activities at this time."
 
 #: .\templates\contest\list.html:180
 msgid "Past Contests"
-msgstr ""
+msgstr "Past Activities"
 
 #: .\templates\contest\media-js.html:4
 msgid "Are you sure you want to leave?"
@@ -2869,10 +2871,11 @@ msgstr ""
 msgid ""
 "Joining a contest starts your timer, after which it becomes unstoppable."
 msgstr ""
+"Joining an activity starts your timer, after which it becomes unstoppable."
 
 #: .\templates\contest\private.html:4
 msgid "Only the following organizations may access this contest:"
-msgstr ""
+msgstr "Only the following organizations may access this activity:"
 
 #: .\templates\contest\ranking-table.html:27
 #, python-brace-format
