@@ -68,7 +68,7 @@ class ContestListMixin(object):
         return queryset.distinct()
 
 
-class ContestList(DiggPaginatorMixin, TitleMixin, ContestListMixin, ListView):
+class ContestList(LoginRequiredMixin, DiggPaginatorMixin, TitleMixin, ContestListMixin, ListView):
     model = Contest
     paginate_by = 20
     template_name = 'contest/list.html'

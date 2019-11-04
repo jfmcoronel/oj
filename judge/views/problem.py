@@ -8,7 +8,7 @@ from collections import defaultdict
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.db import transaction
 from django.db.models import Count, F, Prefetch, Q, Max
@@ -281,7 +281,7 @@ class ProblemPdfView(ProblemMixin, SingleObjectMixin, View):
         return response
 
 
-class ProblemList(QueryStringSortMixin, TitleMixin, SolvedProblemMixin, ListView):
+class ProblemList(LoginRequiredMixin, QueryStringSortMixin, TitleMixin, SolvedProblemMixin, ListView):
     model = Problem
     title = gettext_lazy('Problems')
     context_object_name = 'problems'
