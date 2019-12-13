@@ -24,6 +24,8 @@ from judge.views.select2 import AssigneeSelect2View, CommentSelect2View, Contest
     ContestUserSearchSelect2View, OrganizationSelect2View, ProblemSelect2View, TicketUserSelect2View, \
     UserSearchSelect2View, UserSelect2View
 
+from judge.views import summary
+
 admin.autodiscover()
 
 register_patterns = [
@@ -355,6 +357,14 @@ urlpatterns = [
         url(r'^success$', tasks.demo_success),
         url(r'^failure$', tasks.demo_failure),
         url(r'^progress$', tasks.demo_progress),
+    ])),
+
+    url(r'^completion/', include([
+        url(r'^(?P<organization>[^/]+)/(?P<problem_prefix>[^/]+)/$', summary.overall_completion, name='overall_completion'),
+    ])),
+
+    url(r'^summary/', include([
+        url(r'^(?P<organization>[^/]+)/(?P<problem_prefix>[^/]+)/$', summary.overall_summary, name='overall_summary'),
     ])),
 ]
 
