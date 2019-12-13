@@ -200,6 +200,7 @@ def overall_completion(request, organization, problem_prefix):
 
 
     ranked = request.GET.get("ranked")
+    zero_row = request.GET.get("zero_row")
     if ranked:
         if is_contest:
             student_grades = sorted(student_grades, key=lambda sg: (
@@ -216,5 +217,6 @@ def overall_completion(request, organization, problem_prefix):
     context['student_grades'] = student_grades
     context['ranked'] = ranked
     context['is_contest'] = is_contest
+    context['zero_row'] = zero_row
 
     return render(request, 'summary/overall.html', context)
