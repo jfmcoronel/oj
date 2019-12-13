@@ -30,7 +30,7 @@ class DefaultContestFormat(BaseContestFormat):
         points = 0
         format_data = {}
 
-        # Get earliest highest-scoring submission
+        # Hit earliest highest-scoring submissions first
         results = participation.submissions.values('problem_id').annotate(
             time=Max('submission__date'),
             points=Max('points')
@@ -39,13 +39,18 @@ class DefaultContestFormat(BaseContestFormat):
             'submission__date'
         )
 
-        if results:
-            result = results[0]
-            dt = (result['time'] - participation.start).total_seconds()
-            if result['points']:
-                cumtime += dt
-            format_data[str(result['problem_id'])] = {'time': dt, 'points': result['points']}
-            points += result['points']
+        for result in results:
+            key = str(result['problem_id'])
+
+            # Ignore problems with already-hit submissions
+            if key not in format_data:
+                points += result['points']
+
+                dt = (result['time'] - participation.start).total_seconds()
+                if result['points']:
+                    cumtime += dt
+
+                format_data[key] = {'time': dt, 'points': result['points']}
 
         participation.cumtime = max(cumtime, 0)
         participation.score = points
