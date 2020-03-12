@@ -582,6 +582,9 @@ class ContestRankingBase(ContestMixin, TitleMixin, DetailView):
         if not self.object.can_see_scoreboard(self.request.user):
             raise Http404()
 
+        if not self.request.user.is_superuser:
+            raise Http404()
+
         users, problems = self.get_ranking_list()
         context['users'] = users
         context['problems'] = problems

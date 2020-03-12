@@ -337,13 +337,12 @@ class Problem(models.Model):
         submissions = Submission.objects.filter(problem=self, user=profile)
 
         if submissions:
-            if self.date:
-                submissions = submissions.filter(date__lte=self.date)
-            else:
-                contest = self.containing_contest(profile)
+            contest = self.containing_contest(profile)
 
-                if contest:
-                    submissions = submissions.filter(date__lte=contest.end_time)
+            if contest:
+                submissions = submissions.filter(date__lte=contest.end_time)
+            elif self.date:
+                submissions = submissions.filter(date__lte=self.date)
 
         return submissions
 
@@ -387,7 +386,7 @@ class Problem(models.Model):
 
         if contests:
             from judge.models import ContestParticipation
-            participation = ContestParticipation.objects.filter(contest__in=contests, user=profile)
+            participation = ContestParticipation.objects.filter(contest__in=contests, user=profile, virtual=0)
 
             if participation:
                 return participation.first().contest

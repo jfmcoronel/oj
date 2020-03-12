@@ -168,7 +168,6 @@ def overall_completion(request, organization, problem_prefix):
         final_time = zero_timedelta
 
         for problem in problems:
-            from judge.models import Submission
             submissions = Submission.objects.filter(problem=problem, user=student)
 
             grade = 0.0
