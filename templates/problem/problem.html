@@ -110,7 +110,6 @@
     {% endif %}
 
     <hr style="padding-bottom: 0.3em">
-
     {% if request.user.is_authenticated and has_submissions %}
         <div>
             <a href="{{ url('user_submissions', problem.code, request.user.username) }}">{{ _('My submissions') }}</a>
@@ -122,8 +121,7 @@
         <div><a href="{{ url('ranked_submissions', problem.code) }}">{{ _('Best submissions') }}</a></div>
     {% endif %}
 
-    {% if editorial and editorial.is_public and 
-            not (request.user.is_authenticated and request.profile.current_contest) %}
+    {% if editorial and editorial.is_public and not (request.user.is_authenticated and request.profile.current_contest) %}
         <hr>
         <div><a href="{{ url('problem_editorial', problem.code) }}">{{ _('Read editorial') }}</a></div>
     {% endif %}
