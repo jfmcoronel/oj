@@ -12,3 +12,7 @@ resources/ranks.css
 resources/table.css
 resources/martor-description.css
 sass_processed
+
+uploads
+bridged.log
+node_modules
