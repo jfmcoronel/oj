@@ -25,6 +25,8 @@ from judge.views.select2 import AssigneeSelect2View, CommentSelect2View, Contest
     UserSearchSelect2View, UserSelect2View
 from judge.views.widgets import martor_image_uploader
 
+from judge.views import summary
+
 admin.autodiscover()
 
 register_patterns = [
@@ -56,21 +58,21 @@ register_patterns = [
     url(r'^password/change/done/$', auth_views.PasswordChangeDoneView.as_view(
         template_name='registration/password_change_done.html',
     ), name='password_change_done'),
-    url(r'^password/reset/$', auth_views.PasswordResetView.as_view(
-        template_name='registration/password_reset.html',
-        html_email_template_name='registration/password_reset_email.html',
-        email_template_name='registration/password_reset_email.txt',
-    ), name='password_reset'),
-    url(r'^password/reset/confirm/(?P<uidb64>[0-9A-Za-z]+)-(?P<token>.+)/$',
-        auth_views.PasswordResetConfirmView.as_view(
-            template_name='registration/password_reset_confirm.html',
-        ), name='password_reset_confirm'),
-    url(r'^password/reset/complete/$', auth_views.PasswordResetCompleteView.as_view(
-        template_name='registration/password_reset_complete.html',
-    ), name='password_reset_complete'),
-    url(r'^password/reset/done/$', auth_views.PasswordResetDoneView.as_view(
-        template_name='registration/password_reset_done.html',
-    ), name='password_reset_done'),
+    #url(r'^password/reset/$', auth_views.PasswordResetView.as_view(
+    #    template_name='registration/password_reset.html',
+    #    html_email_template_name='registration/password_reset_email.html',
+    #    email_template_name='registration/password_reset_email.txt',
+    #), name='password_reset'),
+    #url(r'^password/reset/confirm/(?P<uidb64>[0-9A-Za-z]+)-(?P<token>.+)/$',
+    #    auth_views.PasswordResetConfirmView.as_view(
+    #        template_name='registration/password_reset_confirm.html',
+    #    ), name='password_reset_confirm'),
+    #url(r'^password/reset/complete/$', auth_views.PasswordResetCompleteView.as_view(
+    #    template_name='registration/password_reset_complete.html',
+    #), name='password_reset_complete'),
+    #url(r'^password/reset/done/$', auth_views.PasswordResetDoneView.as_view(
+    #    template_name='registration/password_reset_done.html',
+    #), name='password_reset_done'),
     url(r'^social/error/$', register.social_auth_error, name='social_auth_error'),
 
     url(r'^2fa/$', two_factor.TwoFactorLoginView.as_view(), name='login_2fa'),
@@ -385,6 +387,14 @@ urlpatterns = [
         url(r'^success$', tasks.demo_success),
         url(r'^failure$', tasks.demo_failure),
         url(r'^progress$', tasks.demo_progress),
+    ])),
+
+    url(r'^completion/', include([
+        url(r'^(?P<organization>[^/]+)/(?P<problem_prefix>[^/]+)/$', summary.overall_completion, name='overall_completion'),
+    ])),
+
+    url(r'^summary/', include([
+        url(r'^(?P<organization>[^/]+)/(?P<problem_prefix>[^/]+)/$', summary.overall_summary, name='overall_summary'),
     ])),
 ]
 

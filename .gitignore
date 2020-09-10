@@ -13,6 +13,7 @@ resources/table.css
 resources/martor-description.css
 sass_processed
 
+*.swp
 uploads
 bridged.log
 node_modules

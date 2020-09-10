@@ -5,6 +5,7 @@ from django import forms
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import get_default_password_validators
+from django.contrib.auth.mixins import UserPassesTestMixin
 from django.forms import ChoiceField, ModelChoiceField
 from django.shortcuts import render
 from django.utils.translation import gettext, gettext_lazy as _
@@ -20,6 +21,12 @@ from judge.widgets import Select2MultipleWidget, Select2Widget
 
 valid_id = re.compile(r'^\w+$')
 bad_mail_regex = list(map(re.compile, settings.BAD_MAIL_PROVIDER_REGEX))
+
+
+class StudentDisallowedMixin(UserPassesTestMixin):
+
+    def test_func(self):
+        return self.request.user.is_superuser
 
 
 class CustomRegistrationForm(RegistrationForm):
@@ -53,7 +60,7 @@ class CustomRegistrationForm(RegistrationForm):
         return self.cleaned_data['email']
 
 
-class RegistrationView(OldRegistrationView):
+class RegistrationView(StudentDisallowedMixin, OldRegistrationView):
     title = _('Registration')
     form_class = CustomRegistrationForm
     template_name = 'registration/registration_form.html'

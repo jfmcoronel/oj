@@ -12,6 +12,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
+from django.utils import timezone
 
 from judge.fulltext import SearchQuerySet
 from judge.models.profile import Organization, Profile
@@ -393,6 +394,70 @@ class Problem(models.Model):
     @property
     def markdown_style(self):
         return 'problem-full' if self.is_full_markup else 'problem'
+
+    @property
+    def author_str(self):
+        return ", ".join([a.user.username for a in self.authors.all()])
+
+    """Returns all submissions within deadline for problem of given student."""
+    def valid_submissions_of(self, profile):
+        from judge.models import Submission
+        submissions = Submission.objects.filter(problem=self, user=profile)
+
+        if submissions:
+            contest = self.containing_contest(profile)
+
+            if contest:
+                submissions = submissions.filter(date__lte=contest.end_time)
+            elif self.date:
+                submissions = submissions.filter(date__lte=self.date)
+
+        return submissions
+
+    def best_submission_of(self, profile):
+        submissions = self.valid_submissions_of(profile).order_by("-points", "date")
+
+        if submissions:
+            return submissions.first()
+
+    def best_submission_date_of(self, profile):
+        submission = self.best_submission_of(profile)
+
+        if submission:
+            return submission.date
+
+    def grade_of(self, profile):
+        submission = self.best_submission_of(profile)
+
+        if submission and submission.points is not None:
+            return submission.points
+
+        return 0
+
+    def best_time_of(self, profile):
+        contest = self.containing_contest(profile)
+
+        if contest:
+            submission = self.best_submission_of(profile)
+
+            if submission:
+                return submission.date - contest.start_time
+
+        dt = timezone.now()
+        zero = dt - dt
+
+        return zero
+
+    def containing_contest(self, profile):
+        from judge.models import Contest
+        contests = Contest.objects.filter(problems=self)
+
+        if contests:
+            from judge.models import ContestParticipation
+            participation = ContestParticipation.objects.filter(contest__in=contests, user=profile, virtual=0)
+
+            if participation:
+                return participation.first().contest
 
     def save(self, *args, **kwargs):
         super(Problem, self).save(*args, **kwargs)

@@ -4,12 +4,13 @@ import shutil
 from datetime import timedelta
 from operator import itemgetter
 from random import randrange
+from collections import defaultdict
 
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.db import transaction
-from django.db.models import Count, F, Prefetch, Q
+from django.db.models import Count, F, Prefetch, Q, Max
 from django.db.utils import ProgrammingError
 from django.http import Http404, HttpResponse, HttpResponseForbidden, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
@@ -150,7 +151,7 @@ class ProblemRaw(ProblemMixin, TitleMixin, TemplateResponseMixin, SingleObjectMi
             ))
 
 
-class ProblemDetail(ProblemMixin, SolvedProblemMixin, CommentedDetailView):
+class ProblemDetail(LoginRequiredMixin, ProblemMixin, SolvedProblemMixin, CommentedDetailView):
     context_object_name = 'problem'
     template_name = 'problem/problem.html'
 
@@ -278,7 +279,7 @@ class ProblemPdfView(ProblemMixin, SingleObjectMixin, View):
         return response
 
 
-class ProblemList(QueryStringSortMixin, TitleMixin, SolvedProblemMixin, ListView):
+class ProblemList(LoginRequiredMixin, QueryStringSortMixin, TitleMixin, SolvedProblemMixin, ListView):
     model = Problem
     title = gettext_lazy('Problems')
     context_object_name = 'problems'
@@ -344,17 +345,26 @@ class ProblemList(QueryStringSortMixin, TitleMixin, SolvedProblemMixin, ListView
         queryset = TranslatedProblemForeignKeyQuerySet.add_problem_i18n_name(queryset, 'i18n_name',
                                                                              self.request.LANGUAGE_CODE,
                                                                              'problem__name')
-        return [{
-            'id': p['problem_id'],
-            'code': p['problem__code'],
-            'name': p['problem__name'],
-            'i18n_name': p['i18n_name'],
-            'group': {'full_name': p['problem__group__full_name']},
-            'points': p['points'],
-            'partial': p['partial'],
-            'user_count': p['user_count'],
-        } for p in queryset.values('problem_id', 'problem__code', 'problem__name', 'i18n_name',
-                                   'problem__group__full_name', 'points', 'partial', 'user_count')]
+        ret = []
+
+        for p in queryset.values('problem_id', 'problem__code', 'problem__name', 'i18n_name',
+                                 'problem__group__full_name', 'points', 'partial', 'user_count'):
+            problem = Problem.objects.get(id=p['problem_id'])
+
+            ret.append({
+                'id': p['problem_id'],
+                'code': p['problem__code'],
+                'name': p['problem__name'],
+                'i18n_name': p['i18n_name'],
+                'group': {'full_name': p['problem__group__full_name']},
+                'points': p['points'],
+                'partial': p['partial'],
+                'user_count': p['user_count'],
+                'author_str': problem.author_str,
+                'ac_rate': problem.ac_rate,
+            })
+
+        return ret
 
     def get_normal_queryset(self):
         filter = Q(is_public=True)
@@ -423,7 +433,21 @@ class ProblemList(QueryStringSortMixin, TitleMixin, SolvedProblemMixin, ListView
             context['hot_problems'] = None
             context['point_start'], context['point_end'], context['point_values'] = 0, 0, {}
             context['hide_contest_scoreboard'] = self.contest.hide_scoreboard
+
+        context['grades'] = self.get_problem_grades(context)
+
         return context
+
+    def get_problem_grades(self, context):
+        grades = defaultdict(int)
+        problems = context['problems']
+        user = self.request.user
+
+        for problem in problems:
+            if hasattr(problem, "grade_of"):
+                grades[problem.id] = problem.grade_of(user.profile)
+
+        return grades
 
     def get_noui_slider_points(self):
         points = sorted(self.prepoint_queryset.values_list('points', flat=True).distinct())

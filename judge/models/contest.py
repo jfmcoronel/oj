@@ -1,7 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator, RegexValidator
 from django.db import models, transaction
-from django.db.models import CASCADE, Q
+from django.db.models import CASCADE, Q, Min
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.functional import cached_property
@@ -430,6 +430,25 @@ class ContestParticipation(models.Model):
         end = self.end_time
         if end is not None and end >= self._now:
             return end - self._now
+
+    @property
+    def time_finished(self):
+        finish_times = []
+
+        for problem in self.contest.contest_problems.all():
+            solution = problem.submissions.filter(participation=self, points=problem.points) \
+                .values('submission__user_id').annotate(time=Min('submission__date'))
+            if not solution:
+                solution = problem.submissions.filter(participation=self, points__gt=0) \
+                    .values('submission__user_id', 'points') \
+                    .annotate(time=Min('submission__date'))
+            if solution:
+                finish_times.append(solution[0]['time'])
+
+        if not finish_times:
+            return self.start - self.start
+
+        return sorted(finish_times)[-1] - self.start
 
     def __str__(self):
         if self.spectate:

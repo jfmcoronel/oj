@@ -63,7 +63,7 @@ class ContestListMixin(object):
         return Contest.get_visible_contests(self.request.user)
 
 
-class ContestList(QueryStringSortMixin, DiggPaginatorMixin, TitleMixin, ContestListMixin, ListView):
+class ContestList(LoginRequiredMixin, QueryStringSortMixin, DiggPaginatorMixin, TitleMixin, ContestListMixin, ListView):
     model = Contest
     paginate_by = 20
     template_name = 'contest/list.html'
@@ -590,9 +590,12 @@ def base_contest_ranking_list(contest, problems, queryset):
 
 
 def contest_ranking_list(contest, problems):
-    return base_contest_ranking_list(contest, problems, contest.users.filter(virtual=0, user__is_unlisted=False)
+    unsorted_list =  base_contest_ranking_list(contest, problems, contest.users.filter(virtual=0, user__is_unlisted=False)
                                      .prefetch_related('user__organizations')
                                      .order_by('is_disqualified', '-score', 'cumtime', 'tiebreaker'))
+
+    # Sort by highest points first, then lowest time taken
+    return sorted(unsorted_list, key=lambda a: (a.points, -a.participation.time_finished), reverse=True)
 
 
 def get_contest_ranking_list(request, contest, participation=None, ranking_list=contest_ranking_list,
@@ -645,6 +648,9 @@ class ContestRankingBase(ContestMixin, TitleMixin, DetailView):
         context = super().get_context_data(**kwargs)
 
         if not self.object.can_see_own_scoreboard(self.request.user):
+            raise Http404()
+
+        if not self.request.user.is_superuser:
             raise Http404()
 
         users, problems = self.get_ranking_list()

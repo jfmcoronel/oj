@@ -65,7 +65,11 @@ class UserPage(TitleMixin, UserMixin, DetailView):
     def get_object(self, queryset=None):
         if self.kwargs.get(self.slug_url_kwarg, None) is None:
             return self.request.profile
-        return super(UserPage, self).get_object(queryset)
+
+        object = super(UserPage, self).get_object(queryset)
+
+        if self.request.user != object.user and not self.request.user.is_superuser:
+            raise Http404()
 
     def dispatch(self, request, *args, **kwargs):
         if self.kwargs.get(self.slug_url_kwarg, None) is None:

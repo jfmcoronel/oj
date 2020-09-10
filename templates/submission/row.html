@@ -48,6 +48,7 @@
         </div>
     {% endif %}
 
+{% if request.user.is_superuser %}
     {% if can_view %}
         <div class="sub-prop"><div>
             <a href="{{ url('submission_status', submission.id) }}">
@@ -74,6 +75,7 @@
         </div></div>
     {% endif %}
 </div>
+{% endif %}
 
 <div class="sub-usage">
     {% if submission.status in ('QU', 'P', 'G', 'CE', 'IE', 'AB') %}

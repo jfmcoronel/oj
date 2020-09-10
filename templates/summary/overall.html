@@ -1,0 +1,51 @@
+<table border=1>
+  <tr>
+    {% if ranked %}
+      <th>Rank</th>
+    {% else %}
+      <th>Number</th>
+    {% endif %}
+      <th>Last Name</th>
+      <th>First Name</th>
+      <th>Section</th>
+    {% for header in problem_headers %}
+      <th>{{ header }}</th>
+    {% endfor %}
+    {% if ranked %}
+      {% if is_contest %}
+        <th>Time</th>
+      {% else %}
+        <th>Date</th>
+      {% endif %}
+    {% endif %}
+    {% if ranked %}
+      <th>Total</th>
+    {% endif %}
+  </tr>
+  {% if zero_row %}
+    <tr>
+      {% for header in problem_headers %}
+        <td>0</td>
+      {% endfor %}
+    </tr>
+  {% endif %}
+  {% for student_grade in student_grades %}
+    <tr>
+      <td>{{ loop.index }}</td>
+      <td>{{ student_grade.last_name }}</td>
+      <td>{{ student_grade.first_name }}</td>
+      <td>{{ student_grade.section }}</td>
+      {% for grade in student_grade.grades %}
+         <td>{{ grade.grade|int }}{% if ranking %}({{ grade.time|date('M j (D), h:i A') }}){% endif %}</td>
+      {% endfor %}
+      {% if ranked %}
+        {% if is_contest %}
+          <td>{{ student_grade.total_time|timedelta('noday') }}</td>
+        {% else %}
+          <td>{% if student_grade.date %}{{ student_grade.date|date('M j (D), h:i A') }}{% endif %}</td>
+        {% endif %}
+	<td>{{ student_grade.total_points|int }}</td>
+      {% endif %}
+    </tr>
+  {% endfor %}
+</table>
