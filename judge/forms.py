@@ -83,7 +83,7 @@ class ProfileForm(ModelForm):
             self.fields['organizations'].queryset = Organization.objects.filter(
                 Q(is_open=True) | Q(id__in=user.profile.organizations.all()),
             )
-        if not self.fields['organizations'].queryset:
+        if 'organizations' in self.fields and not self.fields['organizations'].queryset:
             self.fields.pop('organizations')
 
 
