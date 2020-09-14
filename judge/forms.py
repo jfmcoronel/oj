@@ -47,7 +47,8 @@ class ProfileForm(ModelForm):
 
     class Meta:
         model = Profile
-        fields = ['about', 'timezone', 'language', 'ace_theme']
+        fields = ['about', 'organizations', 'timezone', 'language', 'ace_theme', 'user_script']
+
         widgets = {
             'user_script': AceWidget(theme='github'),
             'timezone': Select2Widget(attrs={'style': 'width:200px'}),
