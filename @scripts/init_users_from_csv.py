@@ -216,14 +216,16 @@ def init_parent_child_classes(class_title, org_slug, language_name, emails, csvs
     for csv in sorted(csvs):
         # FIXME: Hardcoded assumptions
         semester = class_title.split()[-1]
-        lab_title = csv.split("/")[1].split("_")[0] + " " + semester
-        lab_slug = f"{lab_title.lower().replace(' ', '').replace('-', '').replace('.', '')}"
+        lab_title = csv.split("/")[1].split("_")[0]
+        course_name, section = lab_title.rsplit(maxsplit=1)
+        lab_slug = course_name.replace(' ', '') + semester.replace('.', '') + \
+            section.replace('-', '')
+        lab_slug = lab_slug.lower()
 
         init_single_class(lab_title, csv, lab_slug, language_name, handlers, parent_csvs=emails)
 
 
 def main():
-    """
     init_parent_child_classes(
         "CS 11 20.1",
         "cs11201",
@@ -246,8 +248,8 @@ def main():
         ],
         ["pczuniga", "rsgabud", "hapaat"],
     )
-    """
 
+    """
     init_parent_child_classes(
         "CS 32 20.1",
         "cs32201",
@@ -266,6 +268,7 @@ def main():
         ],
         ["pczuniga", "rbjuayong", "kcbuno"],
     )
+    """
 
     # init_single_class(
     #     "CS 12 20.1",
