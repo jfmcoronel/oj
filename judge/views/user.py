@@ -71,6 +71,9 @@ class UserPage(TitleMixin, UserMixin, DetailView):
         if self.request.user != object.user and not self.request.user.is_superuser:
             raise Http404()
 
+        return object
+
+
     def dispatch(self, request, *args, **kwargs):
         if self.kwargs.get(self.slug_url_kwarg, None) is None:
             if not self.request.user.is_authenticated:
