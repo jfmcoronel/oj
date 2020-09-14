@@ -18,3 +18,8 @@ uploads
 bridged.log
 node_modules
 @scripts/*.csv
+@scripts/*.passwords.txt
+.DS_Store
+nouns.txt
+adjectives.txt
+verbs.txt
