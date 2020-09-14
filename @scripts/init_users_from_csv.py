@@ -50,7 +50,7 @@ def parse_students(csv, parent_map):
                 first_name=first_name,
                 email=email,
                 section=section,
-                display_name=f"{cn}_{section}_{last_name}_{first_name}",
+                display_name=f"{section}_{cn}_{last_name}_{first_name}",
             ))
 
     return ret
@@ -227,6 +227,28 @@ def init_parent_child_classes(class_title, org_slug, language_name, emails, csvs
 
 def main():
     init_parent_child_classes(
+        "CS 150 20.1",
+        "cs150201",
+        "OCaml",
+        [
+            "@scripts/CS 150 A_studentcontactlist.csv",
+            "@scripts/CS 150 B_studentcontactlist.csv",
+            "@scripts/CS 150 C_studentcontactlist.csv",
+            "@scripts/CS 150 D_studentcontactlist.csv",
+            "@scripts/CS 150 E_studentcontactlist.csv",
+        ],
+        [
+            "@scripts/CS 150 A_classlist.csv",
+            "@scripts/CS 150 B_classlist.csv",
+            "@scripts/CS 150 C_classlist.csv",
+            "@scripts/CS 150 D_classlist.csv",
+            "@scripts/CS 150 E_classlist.csv",
+        ],
+        ["jfmcoronel", "jdpineda", "aazabala"],
+    )
+
+    """
+    init_parent_child_classes(
         "CS 11 20.1",
         "cs11201",
         "Python 3",
@@ -248,6 +270,7 @@ def main():
         ],
         ["pczuniga", "rsgabud", "hapaat"],
     )
+    """
 
     """
     init_parent_child_classes(
