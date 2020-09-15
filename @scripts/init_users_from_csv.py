@@ -77,6 +77,7 @@ def get_or_init_org(class_title, slug, handlers):
                 org.short_name != class_title or \
                 org.registrant != handlers[0]:
             print("Organization must be updated")
+            input("Press ENTER to confirm: ")
             org.name = class_title
             org.slug = slug
             org.short_name = class_title
@@ -169,7 +170,6 @@ def init_single_class(class_title, csv, org_slug, language_name, handlers=['jfmc
             print("Adding new user account for", student.display_name)
             user, new = create_new_account(student)
             new_accounts.append(new)
-            continue
 
         profile = Profile.objects.filter(user=user).first()
         if not profile:
@@ -216,8 +216,9 @@ def init_parent_child_classes(class_title, org_slug, language_name, emails, csvs
     for csv in sorted(csvs):
         # FIXME: Hardcoded assumptions
         semester = class_title.split()[-1]
-        lab_title = csv.split("/")[1].split("_")[0]
-        course_name, section = lab_title.rsplit(maxsplit=1)
+        semesterless_lab_title = csv.split("/")[1].split("_")[0]
+        course_name, section = semesterless_lab_title.rsplit(maxsplit=1)
+        lab_title = f"{course_name} {semester} {section}"
         lab_slug = course_name.replace(' ', '') + semester.replace('.', '') + \
             section.replace('-', '')
         lab_slug = lab_slug.lower()
@@ -226,6 +227,7 @@ def init_parent_child_classes(class_title, org_slug, language_name, emails, csvs
 
 
 def main():
+    """
     init_parent_child_classes(
         "CS 150 20.1",
         "cs150201",
@@ -246,6 +248,7 @@ def main():
         ],
         ["jfmcoronel", "jdpineda", "aazabala"],
     )
+    """
 
     """
     init_parent_child_classes(
@@ -300,6 +303,14 @@ def main():
     #     "Python 3",
     #     ['jbbeltran'],
     # )
+
+    init_single_class(
+        "ES 26 20.1",
+        "@scripts/ES 26 TXL1_HXY1_studentcontactlist.csv",
+        "es26201",
+        "Python 3",
+        ['rsgabud'],
+    )
 
 
 main()  # Do not use __main__
