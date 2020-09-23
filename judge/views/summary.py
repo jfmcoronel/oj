@@ -36,6 +36,7 @@ def overall_summary(request, organization, problem_prefix):
         'last_name',
         'first_name',
         'section',
+        'cn',
         'grades',
         'total_time',
         'total_points',
@@ -79,19 +80,18 @@ def overall_summary(request, organization, problem_prefix):
             }
 
         name = student.user.last_name
-        sid, section, last_name, first_name = name.split('_', 3)
+        section, cn, last_name, first_name = name.split('_', 3)
 
         #last_name = last_name.encode('utf8')
         #first_name = first_name.encode('utf8')
         name = name.encode('utf8')
-        print("student:", student, name)
-        print("others:", type(name), type(last_name), type(first_name))
 
         sg = StudentGrade(
             sid="",
             last_name=last_name,
             first_name=first_name,
             section=section,
+            cn=cn,
             grades=[i[1] for i in sorted(grade_mapping.items(), key=lambda item: item[0])],
             total_time=final_time if final_time is not None else zero_timedelta,
             date=best_submission_date,

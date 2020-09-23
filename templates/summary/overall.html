@@ -8,6 +8,7 @@
       <th>Last Name</th>
       <th>First Name</th>
       <th>Section</th>
+      <th>CN</th>
     {% for header in problem_headers %}
       <th>{{ header }}</th>
     {% endfor %}
@@ -35,6 +36,7 @@
       <td>{{ student_grade.last_name }}</td>
       <td>{{ student_grade.first_name }}</td>
       <td>{{ student_grade.section }}</td>
+      <td>{{ student_grade.cn }}</td>
       {% for grade in student_grade.grades %}
          <td>{{ grade.grade|int }}{% if ranking %}({{ grade.time|date('M j (D), h:i A') }}){% endif %}</td>
       {% endfor %}

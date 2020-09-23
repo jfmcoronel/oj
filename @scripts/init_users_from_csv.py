@@ -80,7 +80,7 @@ def get_or_init_org(class_title, slug, handlers):
             input("Press ENTER to confirm: ")
             org.name = class_title
             org.slug = slug
-            org.short_name = class_title
+            org.short_name = slug
             org.registrant = handlers[0]
             org.save()
     else:
@@ -89,7 +89,7 @@ def get_or_init_org(class_title, slug, handlers):
         org = Organization(
                 name=class_title,
                 slug=slug,
-                short_name=class_title,
+                short_name=slug,
                 registrant=handlers[0],
                 is_open=False,
             )
@@ -144,6 +144,7 @@ def parse_parent_map(csvs):
 
             cn, sid, _, _, _, email = line.strip().split(",", maxsplit=5)
             sid = sid.replace("-", "")
+            cn = cn.zfill(3)
 
             ret[sid] = (cn, email)
 
@@ -223,7 +224,7 @@ def init_parent_child_classes(class_title, org_slug, language_name, emails, csvs
             section.replace('-', '')
         lab_slug = lab_slug.lower()
 
-        init_single_class(lab_title, csv, lab_slug, language_name, handlers, parent_csvs=emails)
+        init_single_class(lab_title, csv, lab_slug, language_name, handlers, parent_org=parent_org, parent_csvs=emails)
 
 
 def main():
@@ -248,9 +249,7 @@ def main():
         ],
         ["jfmcoronel", "jdpineda", "aazabala"],
     )
-    """
 
-    """
     init_parent_child_classes(
         "CS 11 20.1",
         "cs11201",
@@ -273,9 +272,7 @@ def main():
         ],
         ["pczuniga", "rsgabud", "hapaat"],
     )
-    """
 
-    """
     init_parent_child_classes(
         "CS 32 20.1",
         "cs32201",
@@ -304,12 +301,28 @@ def main():
     #     ['jbbeltran'],
     # )
 
+    #init_single_class(
+    #    "CS 33 20.1",
+    #    "@scripts/CS 33 PARENT_studentcontactlist.csv",
+    #    "cs33201",
+    #    "C",
+    #    ['kcbuno'],
+    #)
+
+    # init_single_class(
+    #     "ES 26 20.1 (Gabud)",
+    #     "@scripts/ES 26 TXL1_HXY1_studentcontactlist.csv",
+    #     "es26201gabud",
+    #     "Python 3",
+    #     ['rsgabud'],
+    # )
+
     init_single_class(
-        "ES 26 20.1",
-        "@scripts/ES 26 TXL1_HXY1_studentcontactlist.csv",
-        "es26201",
+        "ES 26 20.1 (Felizmenio)",
+        "@scripts/ES 26 TIJ2_HWX2_studentcontactlist.csv",
+        "es26201felizmenio",
         "Python 3",
-        ['rsgabud'],
+        ['epfelizmenio'],
     )
 
 
