@@ -80,7 +80,7 @@ def overall_summary(request, organization, problem_prefix):
             }
 
         name = student.user.last_name
-        section, cn, last_name, first_name = name.split('_', 3)
+        cn, section, last_name, first_name = name.split('_', 3)
 
         #last_name = last_name.encode('utf8')
         #first_name = first_name.encode('utf8')
@@ -149,6 +149,7 @@ def overall_completion(request, organization, problem_prefix):
         'last_name',
         'first_name',
         'section',
+        'cn',
         'grades',
         'total_time',
         'total_points',
@@ -183,12 +184,15 @@ def overall_completion(request, organization, problem_prefix):
                 "grade": grade,
             }
 
-        sid, section, last_name, first_name = student.user.last_name.encode('utf8').split('_', 3)
+        name = student.user.last_name
+        cn, section, last_name, first_name = name.split('_', 3)
+
         sg = StudentGrade(
             sid="",
             last_name=last_name,
             first_name=first_name,
             section=section,
+            cn=cn,
             grades=[i[1] for i in sorted(grade_mapping.items(), key=lambda item: item[0])],
             total_time=None,
             date=None,
